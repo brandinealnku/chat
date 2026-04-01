@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ITSBAD Chat — Build Your AI Chatbot</title>
+  <meta name="description" content="Build an AI chatbot for your website or documents in minutes. Preview it instantly, save it to your dashboard, and publish it anywhere." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#" class="brand">
+        <div class="brand-mark">IC</div>
+        <span>ITSBAD Chat</span>
+      </a>
+      <nav class="header-actions">
+        <a href="#demo" class="btn btn-ghost">See Demo</a>
+        <a href="#builder" class="btn btn-primary">Build My Chatbot</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <div class="badge"><span class="dot"></span>AI chatbot builder for websites, PDFs, and course content</div>
+          <h1>Build your <span class="gradient-text">AI chatbot</span> in minutes.</h1>
+          <p>Train it on your website or documents, preview it instantly, then send it to your dashboard to publish, brand, and embed.</p>
+          <div class="hero-cta-row">
+            <a href="#builder" class="btn btn-primary">Build My Chatbot</a>
+            <a href="#demo" class="btn btn-secondary">Try the Demo</a>
+          </div>
+          <div class="micro-proof">
+            <span>No coding required</span>
+            <span>Works with website URLs and PDFs</span>
+            <span>Preview before signup</span>
+          </div>
+        </div>
+        <div class="hero-card">
+          <div class="builder-window">
+            <div class="window-top">
+              <div class="window-dots"><span></span><span></span><span></span></div>
+              <div class="window-pill">Live Builder Preview</div>
+            </div>
+            <div class="builder-layout">
+              <div class="mini-panel">
+                <h3>Bot Setup</h3>
+                <div class="option-chip">Lead Generation</div>
+                <div class="option-chip">Website + PDFs</div>
+                <div class="option-chip">Luxury Tone</div>
+                <div class="option-chip">Pink + Navy Theme</div>
+                <div class="option-chip">Embed Ready</div>
+              </div>
+              <div class="mini-chat">
+                <h3>Preview Chat</h3>
+                <div class="mini-chat-thread">
+                  <div class="chat-bubble user">Can you help visitors book a call?</div>
+                  <div class="chat-bubble bot">Absolutely. I can answer questions, qualify leads, and guide people toward the right next step.</div>
+                  <div class="chat-bubble user">Can you use my website and docs?</div>
+                  <div class="chat-bubble bot">Yes. I can be configured from your website, uploaded PDFs, or both together.</div>
+                </div>
+              </div>
+            </div>
+            <a href="#builder" class="btn btn-primary">Start Building</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="trust-strip">
+      <div class="container trust-grid">
+        <div class="trust-card"><strong>Interactive preview first</strong><p>Let people feel the product before asking for commitment.</p></div>
+        <div class="trust-card"><strong>Website + documents</strong><p>Build from a URL, uploaded PDFs, or both for better answers.</p></div>
+        <div class="trust-card"><strong>Fast setup flow</strong><p>Guided steps reduce friction and move users toward value quickly.</p></div>
+        <div class="trust-card"><strong>Dashboard handoff</strong><p>Save, brand, preview, publish, and copy embed code in one place.</p></div>
+      </div>
+    </section>
+
+    <section id="demo" class="section">
+      <div class="container">
+        <div class="section-head">
+          <h2>Let visitors experience the value immediately.</h2>
+          <p>The strongest funnels feel like guided product experiences with visible value before signup.</p>
+        </div>
+        <div class="demo-shell">
+          <div class="card demo-card">
+            <div class="demo-top">
+              <div>
+                <strong class="section-card-title">Sample Chatbot Preview</strong>
+                <span class="section-card-subtitle">Try a lightweight live experience</span>
+              </div>
+              <div class="status-pill">Preview Ready</div>
+            </div>
+            <div id="demoThread" class="widget-thread">
+              <div class="chat-bubble bot">Hi — I’m your AI assistant. Ask me what I can do.</div>
+            </div>
+            <div class="demo-suggestions">
+              <button class="suggestion-btn" data-demo="What can this chatbot do?">What can this chatbot do?</button>
+              <button class="suggestion-btn" data-demo="Can it work with my PDFs?">Can it work with my PDFs?</button>
+              <button class="suggestion-btn" data-demo="How fast can I launch?">How fast can I launch?</button>
+            </div>
+            <div class="demo-input-row">
+              <input id="demoInput" class="field" type="text" placeholder="Ask the sample chatbot something..." />
+              <button id="sendDemoBtn" class="btn btn-primary">Send</button>
+            </div>
+          </div>
+          <div class="demo-side">
+            <div class="card">
+              <strong class="section-card-title">Why this converts</strong>
+              <div class="checklist">
+                <div class="checklist-item"><i>1</i><div><strong>Visible value before friction</strong><span>Show the chatbot working before asking the user to create an account.</span></div></div>
+                <div class="checklist-item"><i>2</i><div><strong>Guided steps, not a long form</strong><span>Make setup feel fast, focused, and personalized.</span></div></div>
+                <div class="checklist-item"><i>3</i><div><strong>Preview + personalization</strong><span>Tailor the preview to use case, tone, and content source.</span></div></div>
+              </div>
+            </div>
+            <div class="card">
+              <strong class="section-card-title">Best for</strong>
+              <div class="checklist">
+                <div class="checklist-item"><i>L</i><div><strong>Lead generation</strong><span>Capture inquiries and route them toward contact or booking.</span></div></div>
+                <div class="checklist-item"><i>S</i><div><strong>Student/course support</strong><span>Answer syllabus, assignment, and FAQ questions from uploaded docs.</span></div></div>
+                <div class="checklist-item"><i>H</i><div><strong>Help desk and service brands</strong><span>Reduce repetitive questions and guide users faster.</span></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="builder" class="section">
+      <div class="container">
+        <div class="section-head">
+          <h2>Build your chatbot with a guided setup funnel.</h2>
+          <p>Short steps, high clarity, immediate preview, then capture signup when intent is strongest.</p>
+        </div>
+
+        <div class="funnel-shell">
+          <div class="card funnel-card">
+            <div class="progress-wrap">
+              <div class="progress-meta">
+                <span id="progressLabel">Step 1 of 5</span>
+                <span id="progressHint">Choose your main goal</span>
+              </div>
+              <div class="progress-bar"><div id="progressBarFill" class="progress-bar-fill"></div></div>
+            </div>
+
+            <div id="step1" class="step-view active">
+              <h3>What do you want your chatbot to do?</h3>
+              <p class="step-sub">Pick the primary job first. We’ll tailor the preview and messaging around it.</p>
+              <div class="choice-grid" data-step-group="useCase">
+                <button class="choice-card" data-value="Lead Generation"><strong>Lead Generation</strong><span>Capture visitor interest, qualify leads, and move people to contact or booking.</span></button>
+                <button class="choice-card" data-value="Customer Support"><strong>Customer Support</strong><span>Answer common questions and guide users to the right next step.</span></button>
+                <button class="choice-card" data-value="Student FAQ"><strong>Student FAQ</strong><span>Support course, syllabus, deadline, and assignment questions.</span></button>
+                <button class="choice-card" data-value="Internal Knowledge Bot"><strong>Internal Knowledge Bot</strong><span>Help staff search policies, docs, and shared answers quickly.</span></button>
+              </div>
+              <div class="funnel-actions"><button class="btn btn-primary" data-next="2">Continue</button></div>
+            </div>
+
+            <div id="step2" class="step-view">
+              <h3>What kind of business or use case is this for?</h3>
+              <p class="step-sub">This helps us shape the preview language and tone so it feels more realistic.</p>
+              <div class="choice-grid" data-step-group="businessType">
+                <button class="choice-card" data-value="Small Business"><strong>Small Business</strong><span>Perfect for service providers, local brands, and solo operators.</span></button>
+                <button class="choice-card" data-value="Agency or Consultant"><strong>Agency / Consultant</strong><span>Use the chatbot to qualify prospects and route them faster.</span></button>
+                <button class="choice-card" data-value="Educator or Faculty"><strong>Educator / Faculty</strong><span>Create a course helper using your syllabus or uploaded materials.</span></button>
+                <button class="choice-card" data-value="E-commerce"><strong>E-commerce</strong><span>Guide shoppers, answer product questions, and reduce hesitation.</span></button>
+              </div>
+              <div class="funnel-actions"><button class="btn btn-secondary" data-back="1">Back</button><button class="btn btn-primary" data-next="3">Continue</button></div>
+            </div>
+
+            <div id="step3" class="step-view">
+              <h3>Where should your chatbot learn from?</h3>
+              <p class="step-sub">Add a website, upload documents, or combine both for better coverage.</p>
+              <div class="form-grid">
+                <label class="field-label">Source type
+                  <select id="sourceType" class="field">
+                    <option value="">Select a source type</option>
+                    <option value="Website URL">Website URL</option>
+                    <option value="Documents / PDFs">Documents / PDFs</option>
+                    <option value="Website + Documents">Website + Documents</option>
+                  </select>
+                </label>
+                <label class="field-label">Website URL
+                  <input id="websiteUrl" class="field" type="url" placeholder="https://yourwebsite.com" />
+                </label>
+                <label class="field-label">Upload documents
+                  <input id="fileUpload" class="field file-field" type="file" multiple accept=".pdf,.doc,.docx,.txt,.md" />
+                </label>
+                <label class="field-label">Notes about your content
+                  <textarea id="contentNotes" class="field textarea" placeholder="Example: main services, FAQs, course policies, tone guidance, or anything important the bot should know."></textarea>
+                </label>
+              </div>
+              <div class="inline-note">In production, uploads should go to Firebase Storage and be indexed by your backend.</div>
+              <div class="funnel-actions"><button class="btn btn-secondary" data-back="2">Back</button><button class="btn btn-primary" data-next="4">Continue</button></div>
+            </div>
+
+            <div id="step4" class="step-view">
+              <h3>Choose the style of your chatbot.</h3>
+              <p class="step-sub">We’ll use this to shape tone, visual feel, and the preview response style.</p>
+              <div class="choice-grid" data-step-group="tone">
+                <button class="choice-card" data-value="Friendly"><strong>Friendly</strong><span>Warm, approachable, conversational, and helpful.</span></button>
+                <button class="choice-card" data-value="Professional"><strong>Professional</strong><span>Clear, polished, trustworthy, and direct.</span></button>
+                <button class="choice-card" data-value="Luxury"><strong>Luxury</strong><span>Premium, elevated, refined, and high-end.</span></button>
+                <button class="choice-card" data-value="Energetic"><strong>Energetic</strong><span>Bold, upbeat, and conversion-focused.</span></button>
+              </div>
+              <div class="funnel-actions"><button class="btn btn-secondary" data-back="3">Back</button><button id="generatePreviewBtn" class="btn btn-primary">Generate Preview</button></div>
+            </div>
+
+            <div id="step5" class="step-view">
+              <h3>Your chatbot preview is ready.</h3>
+              <p class="step-sub">Create your account and send it to your dashboard to keep building.</p>
+              <div class="form-grid">
+                <label class="field-label">Work email
+                  <input id="emailCapture" class="field" type="email" placeholder="you@example.com" />
+                </label>
+                <label class="field-label">Password
+                  <input id="passwordCapture" class="field" type="password" placeholder="Create a password" />
+                </label>
+              </div>
+              <div class="inline-note">This starter uses Firebase Auth + Firestore. Replace the placeholder Firebase config before using it live.</div>
+              <div class="funnel-actions"><button class="btn btn-secondary" data-back="4">Back</button><button id="saveBotBtn" class="btn btn-primary">Send to My Dashboard</button></div>
+            </div>
+
+            <div id="successState" class="step-view">
+              <h3>Success — your chatbot is ready for the dashboard.</h3>
+              <p class="step-sub">Your setup has been saved and handed off to the dashboard prototype.</p>
+              <div class="checklist">
+                <div class="checklist-item"><i>✓</i><div><strong>Project created</strong><span>Your chatbot configuration is ready for dashboard loading.</span></div></div>
+                <div class="checklist-item"><i>→</i><div><strong>Next step</strong><span>Open the dashboard, review settings, then publish/embed.</span></div></div>
+              </div>
+              <div class="funnel-actions"><a href="app.html" class="btn btn-primary">Open Dashboard</a></div>
+            </div>
+          </div>
+
+          <div class="preview-card">
+            <div class="card">
+              <div class="preview-top">
+                <div>
+                  <strong class="section-card-title">Live Preview Panel</strong>
+                  <span class="section-card-subtitle">Updates as choices change</span>
+                </div>
+                <div class="preview-pill">Preview Mode</div>
+              </div>
+              <div class="preview-widget">
+                <div class="widget-head">
+                  <div class="widget-avatar">AI</div>
+                  <div>
+                    <strong id="previewBotTitle">Your Chatbot</strong>
+                    <span id="previewBotSubtitle">Waiting for your setup choices…</span>
+                  </div>
+                </div>
+                <div id="previewThread" class="widget-thread">
+                  <div class="chat-bubble bot">Hi — I’m your future chatbot. As you make selections, I’ll update this preview to reflect your use case and style.</div>
+                </div>
+              </div>
+              <div class="preview-summary">
+                <div class="summary-box"><strong>Current setup</strong><span id="summarySetup">Choose a goal, source type, and tone to generate a stronger preview.</span></div>
+                <div class="mini-stats">
+                  <div class="stat-card"><strong id="statGoal">—</strong><span>Primary Goal</span></div>
+                  <div class="stat-card"><strong id="statSource">—</strong><span>Knowledge Source</span></div>
+                  <div class="stat-card"><strong id="statTone">—</strong><span>Tone Style</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <strong class="section-card-title">What the dashboard will do</strong>
+              <div class="checklist">
+                <div class="checklist-item"><i>A</i><div><strong>Edit your bot settings</strong><span>Update tone, source type, title, and welcome message.</span></div></div>
+                <div class="checklist-item"><i>B</i><div><strong>Manage knowledge sources</strong><span>Track URLs, files, and training content.</span></div></div>
+                <div class="checklist-item"><i>C</i><div><strong>Publish + embed</strong><span>Copy widget code for installation on a live website.</span></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span>© 2026 ITSBAD Chat</span>
+      <span>Production-style SaaS starter</span>
+    </div>
+  </footer>
+
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module" src="landing.js"></script>
+</body>
+</html>

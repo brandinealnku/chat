@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ITSBAD Chat Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="app-body">
+  <div class="app-shell">
+    <aside class="app-sidebar">
+      <div class="app-sidebar-inner">
+        <div class="brand app-brand"><div class="brand-mark">IC</div><span>ITSBAD Chat</span></div>
+        <nav class="app-nav">
+          <button class="nav-link active" data-tab="overview">Overview</button>
+          <button class="nav-link" data-tab="knowledge">Knowledge Sources</button>
+          <button class="nav-link" data-tab="branding">Branding</button>
+          <button class="nav-link" data-tab="publish">Publish</button>
+          <button class="nav-link" data-tab="billing">Billing</button>
+        </nav>
+      </div>
+    </aside>
+
+    <main class="app-main">
+      <div class="app-topbar">
+        <div>
+          <h1 class="app-title">Dashboard</h1>
+          <p class="app-subtitle">Configure your chatbot and get it ready to launch.</p>
+        </div>
+        <div class="app-top-actions">
+          <a href="index.html" class="btn btn-secondary">Back to Landing Page</a>
+        </div>
+      </div>
+
+      <section id="tab-overview" class="app-tab active">
+        <div class="app-grid">
+          <div class="card">
+            <strong class="section-card-title">Project Summary</strong>
+            <div class="summary-list">
+              <div><span>Name</span><strong id="projectName">Your Chatbot</strong></div>
+              <div><span>Goal</span><strong id="projectGoal">—</strong></div>
+              <div><span>Business Type</span><strong id="projectBusiness">—</strong></div>
+              <div><span>Source Type</span><strong id="projectSource">—</strong></div>
+              <div><span>Tone</span><strong id="projectTone">—</strong></div>
+              <div><span>Email</span><strong id="projectEmail">—</strong></div>
+            </div>
+          </div>
+          <div class="card">
+            <strong class="section-card-title">Preview</strong>
+            <div class="preview-widget">
+              <div class="widget-head">
+                <div class="widget-avatar">AI</div>
+                <div>
+                  <strong id="dashboardBotTitle">Your Chatbot</strong>
+                  <span id="dashboardBotSubtitle">Ready for refinement</span>
+                </div>
+              </div>
+              <div id="dashboardPreviewThread" class="widget-thread">
+                <div class="chat-bubble bot">Hi — I’m your configured chatbot. Continue customizing me using the tabs on the left.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-knowledge" class="app-tab">
+        <div class="app-grid single">
+          <div class="card">
+            <strong class="section-card-title">Knowledge Sources</strong>
+            <div class="summary-list">
+              <div><span>Website URL</span><strong id="knowledgeUrl">—</strong></div>
+              <div><span>Uploaded Files</span><strong id="knowledgeFiles">—</strong></div>
+              <div><span>Content Notes</span><strong id="knowledgeNotes">—</strong></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-branding" class="app-tab">
+        <div class="app-grid single">
+          <div class="card">
+            <strong class="section-card-title">Branding Controls</strong>
+            <div class="form-grid">
+              <label class="field-label">Chatbot Title
+                <input id="brandingTitle" class="field" type="text" placeholder="Your Chatbot" />
+              </label>
+              <label class="field-label">Welcome Message
+                <textarea id="brandingWelcome" class="field textarea" placeholder="Hi — how can I help?"></textarea>
+              </label>
+              <div class="funnel-actions"><button id="saveBrandingBtn" class="btn btn-primary">Save Branding</button></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-publish" class="app-tab">
+        <div class="app-grid single">
+          <div class="card">
+            <strong class="section-card-title">Publish + Embed</strong>
+            <p class="step-sub">This generates example widget code tied to your saved project.</p>
+            <label class="field-label">Example Embed Code
+              <textarea id="embedCode" class="field textarea" readonly></textarea>
+            </label>
+            <div class="funnel-actions"><button id="copyEmbedBtn" class="btn btn-primary">Copy Embed Code</button></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-billing" class="app-tab">
+        <div class="app-grid single">
+          <div class="card">
+            <strong class="section-card-title">Billing</strong>
+            <div class="pricing-grid">
+              <div class="price-card">
+                <h3>Starter</h3>
+                <div class="price">$0</div>
+                <p>Preview your bot and test your setup.</p>
+              </div>
+              <div class="price-card featured">
+                <h3>Pro</h3>
+                <div class="price">$29<span>/mo</span></div>
+                <p>Live widget, file uploads, and dashboard branding controls.</p>
+              </div>
+              <div class="price-card">
+                <h3>Agency</h3>
+                <div class="price">$99<span>/mo</span></div>
+                <p>Multiple bots, client management, and advanced deployment options.</p>
+              </div>
+            </div>
+            <div class="inline-note">Stripe is not wired in this starter. Add checkout or billing portal links next.</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
