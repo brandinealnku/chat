@@ -1,21 +1,70 @@
 import { auth, db } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { collection, query, where, orderBy, limit, getDocs, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { collection, query, where, limit, getDocs, doc, getDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 let currentProject = null;
-function slugify(value) { return String(value).toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, ""); }
+
+function slugify(value) {
+  return String(value).toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
+function ensureDashboardStatus() {
+  let box = document.getElementById("dashboardStatus");
+  if (box) return box;
+  const topbar = document.querySelector(".app-topbar");
+  box = document.createElement("div");
+  box.id = "dashboardStatus";
+  box.className = "inline-note save-status hidden";
+  topbar?.insertAdjacentElement("afterend", box);
+  return box;
+}
+
+const dashboardStatus = ensureDashboardStatus();
+
+function setDashboardStatus(message = "", kind = "info") {
+  if (!dashboardStatus) return;
+  if (!message) {
+    dashboardStatus.textContent = "";
+    dashboardStatus.className = "inline-note save-status hidden";
+    return;
+  }
+  dashboardStatus.textContent = message;
+  dashboardStatus.className = `inline-note save-status status-${kind}`;
+}
+
+async function loadProjectById(projectId) {
+  const projectRef = doc(db, "projects", projectId);
+  const snapshot = await getDoc(projectRef);
+  if (!snapshot.exists()) return null;
+  return { id: snapshot.id, ...snapshot.data() };
+}
 
 async function loadLatestProject(userId) {
-  const q = query(collection(db, "projects"), where("userId", "==", userId), orderBy("createdAt", "desc"), limit(1));
+  const rememberedId = localStorage.getItem("itsbadChatLastProjectId");
+  if (rememberedId) {
+    const rememberedProject = await loadProjectById(rememberedId);
+    if (rememberedProject?.userId === userId) return rememberedProject;
+  }
+
+  const q = query(collection(db, "projects"), where("userId", "==", userId), limit(20));
   const snapshot = await getDocs(q);
   if (snapshot.empty) return null;
-  const docSnap = snapshot.docs[0];
-  return { id: docSnap.id, ...docSnap.data() };
+
+  const projects = snapshot.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
+  projects.sort((a, b) => {
+    const aValue = a.clientCreatedAt || a.createdAt?.seconds || 0;
+    const bValue = b.clientCreatedAt || b.createdAt?.seconds || 0;
+    return bValue - aValue;
+  });
+
+  return projects[0];
 }
 
 function populateDashboard(project) {
   if (!project) return;
   currentProject = project;
+  localStorage.setItem("itsbadChatLastProjectId", project.id);
+
   document.getElementById("projectName").textContent = project.name || "Your Chatbot";
   document.getElementById("projectGoal").textContent = project.useCase || "—";
   document.getElementById("projectBusiness").textContent = project.businessType || "—";
@@ -55,17 +104,21 @@ document.getElementById("saveBrandingBtn")?.addEventListener("click", async () =
     currentProject.name = newName;
     currentProject.welcomeMessage = newWelcome;
     populateDashboard(currentProject);
-    alert("Branding saved.");
+    setDashboardStatus("Branding saved.", "success");
   } catch (error) {
     console.error(error);
-    alert(error.message || "Could not save branding.");
+    setDashboardStatus(error.message || "Could not save branding.", "error");
   }
 });
 
 document.getElementById("copyEmbedBtn")?.addEventListener("click", async () => {
   const embed = document.getElementById("embedCode").value;
-  try { await navigator.clipboard.writeText(embed); alert("Embed code copied."); }
-  catch { alert("Could not copy automatically. Please copy it manually."); }
+  try {
+    await navigator.clipboard.writeText(embed);
+    setDashboardStatus("Embed code copied.", "success");
+  } catch {
+    setDashboardStatus("Could not copy automatically. Please copy it manually.", "error");
+  }
 });
 
 onAuthStateChanged(auth, async (user) => {
@@ -75,15 +128,19 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
   try {
+    setDashboardStatus("Loading your latest chatbot project…", "info");
     const project = await loadLatestProject(user.uid);
     if (!project) {
-      alert("No project found for this account yet.");
-      window.location.href = "index.html";
+      setDashboardStatus("No saved project was found for this account yet. Go back to the landing page and save one first.", "error");
       return;
     }
     populateDashboard(project);
+    setDashboardStatus("Dashboard loaded.", "success");
   } catch (error) {
     console.error(error);
-    alert(error.message || "Failed to load your dashboard.");
+    setDashboardStatus(
+      `${error.message || "Failed to load your dashboard."} If you still see an index error in the Firebase console, create a composite index for projects.userId + createdAt desc — but this version now tries to avoid that query path.`,
+      "error"
+    );
   }
 });
