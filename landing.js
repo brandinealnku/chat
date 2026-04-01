@@ -1,5 +1,13 @@
 import { auth, db, storage } from "./firebase-config.js";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import {
+  browserLocalPersistence,
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  setPersistence,
+  signInWithEmailAndPassword,
+  signInWithPopup
+} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
@@ -57,6 +65,15 @@ function ensureStatusBox() {
 }
 
 const saveStatus = ensureStatusBox();
+const authModeLabel = document.getElementById("authModeLabel");
+const authEmailInput = document.getElementById("authEmail");
+const authPasswordInput = document.getElementById("authPassword");
+const authSubmitBtn = document.getElementById("authSubmitBtn");
+const authGoogleBtn = document.getElementById("authGoogleBtn");
+const authToggleBtn = document.getElementById("authToggleBtn");
+const authStatus = document.getElementById("authStatus");
+const googleProvider = new GoogleAuthProvider();
+let authMode = "signup";
 
 function setStatus(message = "", kind = "info") {
   if (!saveStatus) return;
@@ -67,6 +84,29 @@ function setStatus(message = "", kind = "info") {
   }
   saveStatus.textContent = message;
   saveStatus.className = `inline-note save-status status-${kind}`;
+}
+
+function setAuthStatus(message = "", kind = "info") {
+  if (!authStatus) return;
+  if (!message) {
+    authStatus.textContent = "";
+    authStatus.className = "inline-note save-status hidden";
+    return;
+  }
+  authStatus.textContent = message;
+  authStatus.className = `inline-note save-status status-${kind}`;
+}
+
+function renderAuthMode() {
+  const isSignup = authMode === "signup";
+  if (authModeLabel) authModeLabel.textContent = isSignup ? "Sign Up" : "Sign In";
+  if (authSubmitBtn) authSubmitBtn.textContent = isSignup ? "Create account" : "Sign in";
+  if (authToggleBtn) authToggleBtn.textContent = isSignup ? "Already have an account? Sign In" : "Need an account? Sign Up";
+  if (authPasswordInput) authPasswordInput.autocomplete = isSignup ? "new-password" : "current-password";
+}
+
+async function redirectToApp() {
+  window.location.href = "app.html";
 }
 
 function isPlaceholderFirebaseConfig() {
@@ -301,6 +341,98 @@ saveBotBtn?.addEventListener("click", async (event) => {
   }
 });
 
+async function handleEmailAuth(event) {
+  event.preventDefault();
+  const email = authEmailInput?.value.trim() || "";
+  const password = authPasswordInput?.value || "";
+
+  if (!email || !password) {
+    setAuthStatus("Please enter both email and password.", "error");
+    return;
+  }
+
+  const isSignup = authMode === "signup";
+  const originalText = authSubmitBtn?.textContent || "";
+
+  try {
+    if (authSubmitBtn) {
+      authSubmitBtn.disabled = true;
+      authSubmitBtn.textContent = isSignup ? "Saving..." : "Signing in...";
+    }
+    if (authGoogleBtn) authGoogleBtn.disabled = true;
+    if (authToggleBtn) authToggleBtn.disabled = true;
+    setAuthStatus(isSignup ? "Creating your account..." : "Signing you in...", "info");
+
+    if (isSignup) {
+      await createUserWithEmailAndPassword(auth, email, password);
+    } else {
+      await signInWithEmailAndPassword(auth, email, password);
+    }
+    setAuthStatus("Success. Redirecting to your dashboard...", "success");
+    await redirectToApp();
+  } catch (error) {
+    console.error("EMAIL AUTH ERROR", error);
+    setAuthStatus(error?.message || "Authentication failed.", "error");
+  } finally {
+    if (authSubmitBtn) {
+      authSubmitBtn.disabled = false;
+      authSubmitBtn.textContent = originalText;
+    }
+    if (authGoogleBtn) authGoogleBtn.disabled = false;
+    if (authToggleBtn) authToggleBtn.disabled = false;
+  }
+}
+
+async function handleGoogleAuth() {
+  try {
+    if (authSubmitBtn) authSubmitBtn.disabled = true;
+    if (authGoogleBtn) {
+      authGoogleBtn.disabled = true;
+      authGoogleBtn.textContent = "Signing in...";
+    }
+    if (authToggleBtn) authToggleBtn.disabled = true;
+    setAuthStatus("Opening Google sign-in...", "info");
+    await signInWithPopup(auth, googleProvider);
+    setAuthStatus("Success. Redirecting to your dashboard...", "success");
+    await redirectToApp();
+  } catch (error) {
+    console.error("GOOGLE AUTH ERROR", error);
+    setAuthStatus(error?.message || "Google sign-in failed.", "error");
+  } finally {
+    if (authSubmitBtn) authSubmitBtn.disabled = false;
+    if (authGoogleBtn) {
+      authGoogleBtn.disabled = false;
+      authGoogleBtn.textContent = "Continue with Google";
+    }
+    if (authToggleBtn) authToggleBtn.disabled = false;
+  }
+}
+
+async function initializeLandingAuth() {
+  try {
+    await setPersistence(auth, browserLocalPersistence);
+  } catch (error) {
+    console.error("AUTH PERSISTENCE ERROR", error);
+    setAuthStatus(error?.message || "Could not initialize auth persistence.", "error");
+  }
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      console.info("Authenticated user detected, redirecting to app.html", { uid: user.uid });
+      window.location.href = "app.html";
+    }
+  });
+
+  renderAuthMode();
+  authSubmitBtn?.addEventListener("click", handleEmailAuth);
+  authGoogleBtn?.addEventListener("click", handleGoogleAuth);
+  authToggleBtn?.addEventListener("click", () => {
+    authMode = authMode === "signup" ? "signin" : "signup";
+    setAuthStatus("");
+    renderAuthMode();
+  });
+}
+
 const demoThread = document.getElementById("demoThread");
 const demoInput = document.getElementById("demoInput");
 const sendDemoBtn = document.getElementById("sendDemoBtn");
@@ -342,3 +474,4 @@ document.querySelectorAll("[data-demo]").forEach((btn) => btn.addEventListener("
 
 updateSummary();
 setStep(1);
+initializeLandingAuth();
