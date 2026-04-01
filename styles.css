@@ -946,3 +946,35 @@ textarea::placeholder {
     text-align: left;
   }
 }
+
+
+.save-status {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.84);
+  line-height: 1.55;
+}
+
+.save-status.hidden {
+  display: none;
+}
+
+.status-info {
+  color: var(--brand-navy);
+  background: rgba(58,59,120,0.08);
+  border-color: rgba(58,59,120,0.14);
+}
+
+.status-success {
+  color: #0c7c4e;
+  background: rgba(20,184,106,0.10);
+  border-color: rgba(20,184,106,0.20);
+}
+
+.status-error {
+  color: #a1274a;
+  background: rgba(255,102,196,0.10);
+  border-color: rgba(240,76,180,0.22);
+}
