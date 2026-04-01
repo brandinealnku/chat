@@ -43,6 +43,55 @@ const fileUploadInput = document.getElementById("fileUpload");
 const contentNotesInput = document.getElementById("contentNotes");
 const emailCapture = document.getElementById("emailCapture");
 const passwordCapture = document.getElementById("passwordCapture");
+const saveBotBtn = document.getElementById("saveBotBtn");
+const stepFive = document.getElementById("step5");
+
+function ensureStatusBox() {
+  let box = document.getElementById("saveStatus");
+  if (box) return box;
+  box = document.createElement("div");
+  box.id = "saveStatus";
+  box.className = "inline-note save-status hidden";
+  stepFive?.appendChild(box);
+  return box;
+}
+
+const saveStatus = ensureStatusBox();
+
+function setStatus(message = "", kind = "info") {
+  if (!saveStatus) return;
+  if (!message) {
+    saveStatus.textContent = "";
+    saveStatus.className = "inline-note save-status hidden";
+    return;
+  }
+  saveStatus.textContent = message;
+  saveStatus.className = `inline-note save-status status-${kind}`;
+}
+
+function isPlaceholderFirebaseConfig() {
+  const options = auth?.app?.options || {};
+  return [options.apiKey, options.projectId, options.appId].some((value) =>
+    typeof value === "string" && value.startsWith("YOUR_")
+  );
+}
+
+function humanizeFirebaseError(error) {
+  const code = error?.code || "";
+  const map = {
+    "auth/email-already-in-use": "That email already has an account. Try the same password you used before.",
+    "auth/invalid-email": "Enter a valid email address.",
+    "auth/weak-password": "Use a stronger password with at least 6 characters.",
+    "auth/invalid-credential": "That email/password combination was not accepted. Double-check your password.",
+    "auth/wrong-password": "That password did not match the existing account.",
+    "auth/network-request-failed": "Firebase could not be reached. Check your internet connection and try again.",
+    "permission-denied": "Firestore or Storage rules blocked the request. Check your Firebase rules.",
+    "storage/unauthorized": "Storage rules blocked the file upload. Check your Firebase Storage rules.",
+    "storage/canceled": "The upload was canceled before it completed.",
+    "storage/unknown": "Storage returned an unknown error. Check the browser console for details."
+  };
+  return map[code] || error?.message || "Something went wrong while saving your project.";
+}
 
 function setStep(step) {
   currentStep = step;
@@ -116,6 +165,8 @@ function buildGeneratedPreview() {
 }
 
 async function uploadProjectFiles(userId, projectSlug) {
+  if (!state.uploadedFiles.length) return [];
+
   const uploaded = [];
   for (const file of state.uploadedFiles) {
     const fileRef = ref(storage, `projects/${userId}/${projectSlug}/${Date.now()}-${file.name}`);
@@ -144,10 +195,16 @@ function slugify(value) {
 }
 
 async function saveProjectToFirebase() {
+  if (isPlaceholderFirebaseConfig()) {
+    throw new Error("Firebase is still using placeholder values. Update firebase-config.js with your real Firebase project settings first.");
+  }
+
   const user = await createOrSignInUser(state.email, state.password);
   const projectName = state.useCase ? `${state.useCase} Bot` : "Your Chatbot";
   const projectSlug = slugify(projectName);
   const uploadedFiles = await uploadProjectFiles(user.uid, projectSlug);
+
+  const clientCreatedAt = Date.now();
   const docRef = await addDoc(collection(db, "projects"), {
     userId: user.uid,
     name: projectName,
@@ -160,10 +217,13 @@ async function saveProjectToFirebase() {
     tone: state.tone,
     email: state.email,
     welcomeMessage: `Hi — I’m your ${state.useCase || "AI"} assistant. How can I help today?`,
+    clientCreatedAt,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp()
   });
+
   localStorage.setItem("itsbadChatLastProjectId", docRef.id);
+  localStorage.setItem("itsbadChatLastProjectName", projectName);
   return docRef.id;
 }
 
@@ -195,22 +255,29 @@ fileUploadInput?.addEventListener("change", () => { state.uploadedFiles = Array.
 
 document.getElementById("generatePreviewBtn")?.addEventListener("click", () => {
   if (!validateStep(4)) return;
+  setStatus("");
   buildGeneratedPreview();
   setStep(5);
 });
 
-document.getElementById("saveBotBtn")?.addEventListener("click", async (event) => {
+saveBotBtn?.addEventListener("click", async (event) => {
   if (!validateStep(5)) return;
   const btn = event.currentTarget;
   const original = btn.textContent;
+
   try {
     btn.disabled = true;
     btn.textContent = "Saving...";
+    setStatus("Creating your account, uploading any files, and saving the project…", "info");
     await saveProjectToFirebase();
+    setStatus("Project saved. Opening your dashboard…", "success");
     showSuccessState();
+    window.setTimeout(() => {
+      window.location.href = "app.html";
+    }, 900);
   } catch (error) {
-    console.error(error);
-    alert(error.message || "Something went wrong while saving your project.");
+    console.error("SAVE PROJECT ERROR", error);
+    setStatus(humanizeFirebaseError(error), "error");
   } finally {
     btn.disabled = false;
     btn.textContent = original;
@@ -232,14 +299,28 @@ function handleDemoPrompt(prompt) {
   setTimeout(() => {
     let response = "This chatbot can answer questions, guide visitors, and move them toward the right next step based on your source content.";
     const lower = prompt.toLowerCase();
-    if (lower.includes("pdf") || lower.includes("document")) response = "Yes — a production version can use PDFs, syllabi, help docs, and internal files.";
-    else if (lower.includes("launch") || lower.includes("fast")) response = "The fastest path is: choose a use case, add your website or docs, preview the bot, then move into the dashboard.";
-    else if (lower.includes("what can this chatbot do")) response = "It can answer FAQs, qualify leads, support customers, and personalize conversations based on your website or uploaded docs.";
+    if (lower.includes("pdf") || lower.includes("document")) {
+      response = "Yes — a production version can use PDFs, syllabi, help docs, and internal files.";
+    } else if (lower.includes("launch") || lower.includes("fast")) {
+      response = "The fastest path is: choose a use case, add your website or docs, preview the bot, then move into the dashboard.";
+    } else if (lower.includes("what can this chatbot do")) {
+      response = "It can answer FAQs, qualify leads, support customers, and personalize conversations based on your website or uploaded docs.";
+    }
     appendDemoBubble(response, "bot");
   }, 400);
 }
-sendDemoBtn?.addEventListener("click", () => { const prompt = demoInput.value; if (!prompt.trim()) return; handleDemoPrompt(prompt); demoInput.value = ""; });
-demoInput?.addEventListener("keydown", (event) => { if (event.key === "Enter") { event.preventDefault(); sendDemoBtn.click(); } });
+sendDemoBtn?.addEventListener("click", () => {
+  const prompt = demoInput.value;
+  if (!prompt.trim()) return;
+  handleDemoPrompt(prompt);
+  demoInput.value = "";
+});
+demoInput?.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    sendDemoBtn.click();
+  }
+});
 document.querySelectorAll("[data-demo]").forEach((btn) => btn.addEventListener("click", () => handleDemoPrompt(btn.dataset.demo)));
 
 updateSummary();
