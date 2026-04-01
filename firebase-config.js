@@ -3,6 +3,8 @@ import { getAuth } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth
 import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getStorage } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
+// Replace these values with your own Firebase project settings from:
+// Firebase Console → Project Settings → General → "Your apps" → SDK setup and configuration.
 const firebaseConfig = {
   apiKey: "AIzaSyAWNTnXn2yNXv5KSfVYCW_LH5uVvGtx1TU",
   authDomain: "chatitsbad.firebaseapp.com",

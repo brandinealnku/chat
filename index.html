@@ -72,6 +72,35 @@
       </div>
     </section>
 
+    <section id="auth" class="section">
+      <div class="container">
+        <div class="section-head">
+          <h2>Create your account or sign in to continue.</h2>
+          <p>Use email/password or Google. Your session stays active, and successful authentication redirects directly to your dashboard.</p>
+        </div>
+        <div class="auth-shell card">
+          <div class="auth-head">
+            <span class="badge"><span class="dot"></span><span id="authModeLabel">Sign Up</span></span>
+            <span class="section-card-subtitle">Secure Firebase Authentication</span>
+          </div>
+          <div class="form-grid auth-form-grid">
+            <label class="field-label">Email
+              <input id="authEmail" class="field" type="email" placeholder="you@example.com" autocomplete="email" />
+            </label>
+            <label class="field-label">Password
+              <input id="authPassword" class="field" type="password" placeholder="At least 6 characters" autocomplete="current-password" />
+            </label>
+          </div>
+          <div class="funnel-actions auth-actions">
+            <button id="authSubmitBtn" class="btn btn-primary">Create account</button>
+            <button id="authGoogleBtn" class="btn btn-secondary">Continue with Google</button>
+            <button id="authToggleBtn" class="btn btn-ghost">Already have an account? Sign In</button>
+          </div>
+          <div id="authStatus" class="inline-note save-status hidden" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
     <section class="trust-strip">
       <div class="container trust-grid">
         <div class="trust-card"><strong>Interactive preview first</strong><p>Let people feel the product before asking for commitment.</p></div>
