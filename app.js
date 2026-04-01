@@ -1,6 +1,6 @@
 import { auth, db } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { collection, query, where, limit, getDocs, doc, getDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { collection, query, where, orderBy, limit, getDocs, doc, getDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 let currentProject = null;
 
@@ -46,8 +46,29 @@ async function loadLatestProject(userId) {
     if (rememberedProject?.userId === userId) return rememberedProject;
   }
 
+  let snapshot;
+  try {
+    const indexedQuery = query(collection(db, "projects"), where("userId", "==", userId), orderBy("createdAt", "desc"), limit(1));
+    snapshot = await getDocs(indexedQuery);
+    if (!snapshot.empty) {
+      const docSnap = snapshot.docs[0];
+      return { id: docSnap.id, ...docSnap.data() };
+    }
+  } catch (error) {
+    const needsIndex = error?.code === "failed-precondition" || String(error?.message || "").toLowerCase().includes("requires an index");
+    if (needsIndex) {
+      console.warn("Missing composite index for projects(userId ==, createdAt desc). Falling back to non-indexed query path.", error);
+      setDashboardStatus(
+        "Missing Firestore index: projects(userId ==, createdAt desc). Create it in Firebase Console > Firestore > Indexes, then reload for fastest lookup.",
+        "error"
+      );
+    } else {
+      throw error;
+    }
+  }
+
   const q = query(collection(db, "projects"), where("userId", "==", userId), limit(20));
-  const snapshot = await getDocs(q);
+  snapshot = await getDocs(q);
   if (snapshot.empty) return null;
 
   const projects = snapshot.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));

@@ -90,7 +90,8 @@ function humanizeFirebaseError(error) {
     "storage/canceled": "The upload was canceled before it completed.",
     "storage/unknown": "Storage returned an unknown error. Check the browser console for details."
   };
-  return map[code] || error?.message || "Something went wrong while saving your project.";
+  const readable = map[code] || error?.message || "Something went wrong while saving your project.";
+  return code ? `${readable} (Error code: ${code})` : readable;
 }
 
 function setStep(step) {
@@ -195,36 +196,52 @@ function slugify(value) {
 }
 
 async function saveProjectToFirebase() {
-  if (isPlaceholderFirebaseConfig()) {
-    throw new Error("Firebase is still using placeholder values. Update firebase-config.js with your real Firebase project settings first.");
-  }
-
-  const user = await createOrSignInUser(state.email, state.password);
-  const projectName = state.useCase ? `${state.useCase} Bot` : "Your Chatbot";
-  const projectSlug = slugify(projectName);
-  const uploadedFiles = await uploadProjectFiles(user.uid, projectSlug);
-
-  const clientCreatedAt = Date.now();
-  const docRef = await addDoc(collection(db, "projects"), {
-    userId: user.uid,
-    name: projectName,
+  console.groupCollapsed("[saveProjectToFirebase] Starting save flow");
+  console.log("Selected setup state", {
     useCase: state.useCase,
     businessType: state.businessType,
     sourceType: state.sourceType,
     websiteUrl: state.websiteUrl,
-    uploadedFiles,
-    contentNotes: state.contentNotes,
-    tone: state.tone,
-    email: state.email,
-    welcomeMessage: `Hi — I’m your ${state.useCase || "AI"} assistant. How can I help today?`,
-    clientCreatedAt,
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp()
+    uploadedFileCount: state.uploadedFiles.length,
+    tone: state.tone
   });
+  if (isPlaceholderFirebaseConfig()) {
+    console.groupEnd();
+    throw new Error("Firebase is still using placeholder values. Update firebase-config.js with your real Firebase project settings first.");
+  }
 
-  localStorage.setItem("itsbadChatLastProjectId", docRef.id);
-  localStorage.setItem("itsbadChatLastProjectName", projectName);
-  return docRef.id;
+  try {
+    const user = await createOrSignInUser(state.email, state.password);
+    const projectName = state.useCase ? `${state.useCase} Bot` : "Your Chatbot";
+    const projectSlug = slugify(projectName);
+    const uploadedFiles = await uploadProjectFiles(user.uid, projectSlug);
+    const clientCreatedAt = Date.now();
+
+    console.log("User authenticated; writing project document", { uid: user.uid, projectName, projectSlug });
+    const docRef = await addDoc(collection(db, "projects"), {
+      userId: user.uid,
+      name: projectName,
+      useCase: state.useCase,
+      businessType: state.businessType,
+      sourceType: state.sourceType,
+      websiteUrl: state.websiteUrl,
+      uploadedFiles,
+      contentNotes: state.contentNotes,
+      tone: state.tone,
+      email: state.email,
+      welcomeMessage: `Hi — I’m your ${state.useCase || "AI"} assistant. How can I help today?`,
+      clientCreatedAt,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+
+    localStorage.setItem("itsbadChatLastProjectId", docRef.id);
+    localStorage.setItem("itsbadChatLastProjectName", projectName);
+    console.log("Project write complete", { projectId: docRef.id });
+    return docRef.id;
+  } finally {
+    console.groupEnd();
+  }
 }
 
 function showSuccessState() {
